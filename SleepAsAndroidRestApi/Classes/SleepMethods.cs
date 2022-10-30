@@ -9,7 +9,6 @@ internal class SleepMethods
     private readonly SleepInteractionModel _sleepInteraction;
     private readonly string _url;
     internal readonly Task TaskRun;
-    internal readonly ulong DiscordMessageId;
 
     internal SleepMethods(SleepInteractionModel sleepInteraction, string url)
     {
