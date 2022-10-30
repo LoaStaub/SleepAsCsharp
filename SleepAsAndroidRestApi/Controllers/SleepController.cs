@@ -2,18 +2,26 @@
 using SharedModels.Enums;
 using SharedModels.Models;
 using SleepAsAndroidRestApi.Classes;
+using Microsoft.Extensions.Configuration;
 
 namespace SleepAsAndroidRestApi.Controllers;
 
 public class SleepController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
+
+    public SleepController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+    
     [Route("sleep/action")]
     [HttpPost]
-    public async Task Action(string user, string key, [FromBody] SleepAsAndroid model)
+    public async Task<bool> Action(string user, string key, [FromBody] SleepAsAndroid model)
     {
         if (key != "lstb12")
         {
-            return;
+            return false;
         }
         var sleepInteraction = new SleepInteractionModel
         {
@@ -23,7 +31,9 @@ public class SleepController : ControllerBase
             Value2 = model.value2,
             Value3 = model.value3
         };
-        var sleepMethod = new SleepMethods(sleepInteraction, "https://discord.com/api/webhooks/887711907409186826/xCOsI5RsoRyYgFikWsjHFiCAiPWHhSMvk1NJlqHIMZpxBPnfgC1hCsPDEQefYynPn6fI");
+        var discordWebhookUrl = _configuration.GetValue<string>("Settings:DiscordWebhook");
+        var sleepMethod = new SleepMethods(sleepInteraction, discordWebhookUrl);
         await sleepMethod.TaskRun;
+        return true;
     }
 }
