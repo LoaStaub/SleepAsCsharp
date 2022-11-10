@@ -19,7 +19,8 @@ public class SleepController : ControllerBase
     [HttpPost]
     public async Task<bool> Action(string user, string key, [FromBody] SleepAsAndroid model)
     {
-        if (key != "lstb12")
+        var keySettings = _configuration.GetValue<string>("Settings:KeyForWebhook");
+        if (key != keySettings)
         {
             return false;
         }
